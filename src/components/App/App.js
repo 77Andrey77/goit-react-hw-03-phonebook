@@ -18,6 +18,29 @@ class App extends Component {
     filter: '',
   };
 
+  //////////////////////////////////////////////////
+  componentDidMount() {
+    console.log('App componentDidMount ');
+
+    const contacts = localStorage.getItem('contacts');
+    const parsedContacts = JSON.parse(contacts);
+
+    if (parsedContacts) {
+      this.setState({ contacts: parsedContacts });
+    }
+  }
+  /////////////////////////////////////////////////////
+  componentDidUpdate(prevProps, prevState) {
+    console.log('App componentDidUpdate ');
+
+    if (this.state.contacts !== prevState.contacts) {
+      console.log('обновилось поле contacts, записываю contacts в хранилище');
+
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  }
+
+  /////////////////////////////////////////////////
   addContact = ({ name, number }) => {
     const isNameContacts = this.state.contacts.some(
       contact => contact.name.toLowerCase() === name.toLowerCase(),
@@ -29,6 +52,8 @@ class App extends Component {
 
     if (isNameContacts) {
       alert(`${name} is already in contacts`);
+    } else if (name.trim() === '' || number.trim() === '') {
+      alert('You cannot add such a name and number');
     } else if (isNumberContacts) {
       alert(`${number} is alread in contacts`);
     } else {
@@ -63,27 +88,7 @@ class App extends Component {
       contacts: prevState.contacts.filter(contact => contact.id !== contactId),
     }));
   };
-  //////////////////////////////////////////////////
-  componentDidMount() {
-    console.log('App componentDidMount ');
 
-    const contacts = localStorage.getItem('contacts');
-    const parsedContacts = JSON.parse(contacts);
-
-    if (parsedContacts) {
-      this.setState({ contacts: parsedContacts });
-    }
-  }
-  /////////////////////////////////////////////////////
-  componentDidUpdate(prevProps, prevState) {
-    console.log('App componentDidUpdate ');
-
-    if (this.state.contacts !== prevState.contacts) {
-      console.log('обновилось поле contacts, записываю contacts в хранилище');
-
-      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
-    }
-  }
   /////////////////////////////////////////////////
   render() {
     const visibleContacts = this.visibleContacts();
@@ -97,7 +102,7 @@ class App extends Component {
         {visibleContacts.length > 0 ? (
           <Filter value={this.state.filter} onChange={this.onChangeFilter} />
         ) : (
-          <Notification message="You have no contacts !!" />
+          <Notification message="You have not contacts !!" />
         )}
         <ContactList
           contacts={this.visibleContacts()}
