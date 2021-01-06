@@ -102,7 +102,7 @@ class App extends Component {
         {visibleContacts.length > 0 ? (
           <Filter value={this.state.filter} onChange={this.onChangeFilter} />
         ) : (
-          <Notification message="You have not contacts !!" />
+          <Notification message="You have no contacts !!" />
         )}
         <ContactList
           contacts={this.visibleContacts()}
